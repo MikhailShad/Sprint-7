@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Address Book Content</title>
+</head>
+<body>
+<div>
+    <h2>Address Book Content</h2>
+    <p>
+        Want to add new info? Click <a th:href="@{/app/add}">Add New Record</a>!
+    </p>
+    <br>
+    <table border="1" style="width:300px">
+        <tr>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Address</td>
+            <td>Actions</td>
+        </tr>
+        <tr th:each="record:${result}">
+            <td th:text="${record.id}" th:href="@{/app/{id}/view(id=${record.id})}">View</td>
+            <td th:text="${record.name}">Name</td>
+            <td th:text="${record.address}">Address</td>
+            <td>
+                <a th:href="@{/app/{id}/edit(id=${record.id})}">Edit</a>
+                <a th:href="@{/app/{id}/delete(id=${record.id})}">Delete</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
+

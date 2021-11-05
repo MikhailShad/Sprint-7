@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create</title>
+</head>
+<body>
+<div>
+    <p>Id:</p>
+    <p th:text="${id}">ID</p>
+    <p>Name:</p>
+    <p th:text="${name}">Name</p>
+    <p>Address:</p>
+    <p th:text="${address}">Address</p>
+</div>
+
+<p>
+    <a href="/app/list">Back to List</a>
+</p>
+<p>
+    <a href="/app">Back to Main Menu</a>
+</p>
+</body>
+</html>

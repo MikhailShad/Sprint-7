@@ -1,0 +1,29 @@
+name: Kotlin CI with Maven for Spring-7
+
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  rdbms:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: fwilhe2/setup-kotlin@main
+      - name: Run rdbms tests
+        run: mvn -B clean verify --file rdbms/pom.xml
+
+  spring-boot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: fwilhe2/setup-kotlin@main
+      - name: Run spring-boot tests
+        run: mvn -B clean verify --file spring-boot/pom.xml
+
+  spring-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: fwilhe2/setup-kotlin@main
+      - name: Run spring-security tests
+        run: mvn -B clean verify --file spring-security/pom.xml

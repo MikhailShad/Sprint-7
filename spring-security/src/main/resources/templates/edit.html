@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Page</title>
+</head>
+<body>
+<form method="post">
+    <p>Enter New Name</p>
+
+    <p>
+        <label>
+            <input name="name" th:value="${name}"/>
+        </label>
+
+    </p>
+
+    <p>Enter New Address</p>
+
+    <p>
+        <label>
+            <input name="address" th:value="${address}"/>
+        </label>
+    </p>
+
+    <p>
+        <input type="submit" value="Submit"/>
+    </p>
+
+</form>
+<p>
+    <a href="/app/list">Back to List</a>
+</p>
+</body>
+</html>
