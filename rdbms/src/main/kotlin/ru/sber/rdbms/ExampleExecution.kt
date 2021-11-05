@@ -1,23 +1,6 @@
 package ru.sber.rdbms
 
-import java.sql.DriverManager
-
 fun main() {
-    val connection = DriverManager.getConnection(
-        "jdbc:postgresql://localhost:5432/postgres",
-        "postgres",
-        "postgres"
-    )
-    connection.use { conn ->
-        val prepareStatement = conn.prepareStatement("select 1")
-        prepareStatement.use { statement ->
-            val resultSet = statement.executeQuery()
-            resultSet.use {
-                println("Has result: ${it.next()}")
-                val result = it.getInt(1)
-                println("Execution result: $result")
-            }
-        }
-    }
+    TransferConstraint().transfer(1234, 4321, 100u)
 }
 
