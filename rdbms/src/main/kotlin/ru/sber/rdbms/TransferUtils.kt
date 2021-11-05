@@ -13,6 +13,27 @@ abstract class AbstractTransfer : Transfer {
         "postgres",
         "postgres"
     )
+
+    /**
+     * Проверяет наличие аккаунта и возвращает его версию
+     */
+    protected fun getAccountVersion(connection: Connection, accountId: Long, amount: ULong? = null): Long {
+        val getCurrentAccountInfoStatement =
+            connection.prepareStatement("select amount, version from account where id = ?")
+        getCurrentAccountInfoStatement.setLong(1, accountId)
+        getCurrentAccountInfoStatement.executeQuery().use { resultSet ->
+            if (resultSet.isLast) {
+                throw TransferException("No account with id $accountId found")
+            }
+
+            resultSet.next()
+            if (amount != null && resultSet.getLong("amount") - amount.toLong() < 0) {
+                throw TransferException("Not enough money on account $accountId")
+            }
+
+            return resultSet.getLong("version")
+        }
+    }
 }
 
 class TransferException(message: String) : RuntimeException(message)
