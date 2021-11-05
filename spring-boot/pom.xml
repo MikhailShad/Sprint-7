@@ -45,7 +45,7 @@
             <version>42.2.23</version>
         </dependency>
 
-
+        <!--Test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -64,6 +64,11 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <compilerPlugins>
+        <plugin>spring</plugin>
+        <plugin>jpa</plugin>
+    </compilerPlugins>
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
