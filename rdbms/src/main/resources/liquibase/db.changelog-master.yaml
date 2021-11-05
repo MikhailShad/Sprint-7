@@ -1,5 +1,9 @@
 databaseChangeLog:
   - include:
+      relativeToChangelogFile: true
       file: scripts/init.sql
+  - include:
+      relativeToChangelogFile: true
+      file: scripts/fill.sql
 
 
