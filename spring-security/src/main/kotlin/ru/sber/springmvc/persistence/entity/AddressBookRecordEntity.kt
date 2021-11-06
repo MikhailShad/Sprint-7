@@ -10,7 +10,7 @@ class AddressBookRecordEntity(
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "record_id_gen")
     var id: Long = 0,
 
-    @OneToMany(mappedBy = "addressBookRecord", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "addressBookRecord", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     var people: Set<PersonEntity> = mutableSetOf(),
 
     var address: String
