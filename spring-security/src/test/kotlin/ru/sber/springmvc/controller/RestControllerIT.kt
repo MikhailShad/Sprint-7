@@ -53,7 +53,7 @@ class RestControllerIT {
     fun setUp() {
         headers.add("Cookie", getAuthCookie())
 
-        records.forEach { addressBookService.create(it) }
+        records.forEach { it.id = addressBookService.create(it) }
     }
 
     @ParameterizedTest
@@ -140,10 +140,10 @@ class RestControllerIT {
 
     companion object {
         val records = listOf(
-            AddressBookRecord("A", "Улица Пушкина"),
-            AddressBookRecord("B", "Дом Колотушкина"),
-            AddressBookRecord("C", "Квартира Вольного"),
-            AddressBookRecord("D", "Спросите любого")
+            AddressBookRecord(name = "A", address = "Улица Пушкина"),
+            AddressBookRecord(name = "B", address = "Дом Колотушкина"),
+            AddressBookRecord(name = "C", address = "Квартира Вольного"),
+            AddressBookRecord(name = "D", address = "Спросите любого")
         )
 
         @JvmStatic

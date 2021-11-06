@@ -31,7 +31,7 @@ class MvcControllerIT {
 
     @BeforeEach
     fun setUp() {
-        records.forEach { addressBookService.create(it) }
+        records.forEach { it.id = addressBookService.create(it) }
     }
 
     @Test
@@ -56,16 +56,18 @@ class MvcControllerIT {
             .andExpect(view().name("list"))
     }
 
-    @Test
-    fun `test list with query`() {
-        mockMvc.perform(get("/app/list?name=B"))
+    @ParameterizedTest
+    @MethodSource("created records")
+    fun `test list with query`(addressBookRecord: AddressBookRecord) {
+        mockMvc.perform(get("/app/list?name=${addressBookRecord.name}&address=${addressBookRecord.address}"))
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(view().name("list"))
     }
 
-    @Test
-    fun `test edit`() {
+    @ParameterizedTest
+    @MethodSource("created records")
+    fun `test edit`(addressBookRecord: AddressBookRecord) {
         val note: MultiValueMap<String, String> = LinkedMultiValueMap()
 
         note.add("name", "J")
@@ -74,7 +76,7 @@ class MvcControllerIT {
             "Лондон. Ну это там, где рыба, чипсы, дрянная еда, отвратная погода, Мэри «та самая» Поппинс!"
         )
 
-        mockMvc.perform(post("/app/0/edit").params(note))
+        mockMvc.perform(post("/app/${addressBookRecord.id}/edit").params(note))
             .andDo(print())
             .andExpect(status().is3xxRedirection)
     }
@@ -105,10 +107,10 @@ class MvcControllerIT {
 
     companion object {
         val records = listOf(
-            AddressBookRecord("A", "Улица Пушкина"),
-            AddressBookRecord("B", "Дом Колотушкина"),
-            AddressBookRecord("C", "Квартира Вольного"),
-            AddressBookRecord("D", "Спросите любого")
+            AddressBookRecord(name = "A", address = "Улица Пушкина"),
+            AddressBookRecord(name = "B", address = "Дом Колотушкина"),
+            AddressBookRecord(name = "C", address = "Квартира Вольного"),
+            AddressBookRecord(name = "D", address = "Спросите любого")
         )
 
         @JvmStatic

@@ -2,7 +2,7 @@ package ru.sber.springmvc.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import ru.sber.springmvc.repository.AddressBookRepository
+import ru.sber.springmvc.persistence.repository.AddressBookRepository
 import ru.sber.springmvc.vo.AddressBookRecord
 import ru.sber.springmvc.vo.Query
 
@@ -21,8 +21,8 @@ class AddressBookService @Autowired constructor(val addressBookRepository: Addre
         return addressBookRepository.get(Query(query[Query.ID], query[Query.NAME], query[Query.ADDRESS]))
     }
 
-    fun create(addressBookRecord: AddressBookRecord) {
-        addressBookRepository.create(addressBookRecord)
+    fun create(addressBookRecord: AddressBookRecord): Long {
+        return addressBookRepository.create(addressBookRecord)
     }
 
     fun update(id: Long, addressBookRecord: AddressBookRecord) {
