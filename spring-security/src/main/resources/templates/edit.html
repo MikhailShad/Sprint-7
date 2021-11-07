@@ -16,6 +16,8 @@
     <p>Edit People</p>
     <p>
         <label th:each="person, itemStat : *{people}">
+            <!-- Прокидывает ID на бэк так, чтобы клиент этого не видел -->
+            <input hidden="hidden" th:field="*{people[__${itemStat.index}__].id}"/>
             Name: <input th:field="*{people[__${itemStat.index}__].name}"/>
             <br/>
             Email: <input th:field="*{people[__${itemStat.index}__].email}"/>

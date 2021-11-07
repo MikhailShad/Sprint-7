@@ -64,11 +64,9 @@ class MvcController @Autowired constructor(val addressBookService: AddressBookSe
     @PostMapping("/{id}/edit")
     fun editPage(
         @PathVariable id: String,
-        @ModelAttribute personPage: AddressBookRecord,
-        model: Model
+        @ModelAttribute record: AddressBookRecord
     ): RedirectView {
-        addressBookService.update(id.toLong(), personPage)
-        model.addAttribute("result", "Page was Edited")
+        addressBookService.update(id.toLong(), record)
         return RedirectView("/")
     }
 

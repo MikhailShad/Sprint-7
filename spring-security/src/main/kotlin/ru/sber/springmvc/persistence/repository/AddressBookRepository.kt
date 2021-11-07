@@ -26,7 +26,7 @@ class AddressBookRepository {
             addressBookRecord = AddressBookRecord(
                 result.id,
                 result.people
-                    .map { Person(name = it.name, email = it.email?.value!!) }
+                    .map { Person(id = it.id, name = it.name, email = it.email?.value!!) }
                     .sortedBy { it.id }
                     .toList(),
                 result.address
@@ -133,12 +133,15 @@ class AddressBookRepository {
             record.address = addressBookRecord.address
             record.people = addressBookRecord.people
                 .map {
-                    PersonEntity(
-                        id = it.id ?: 0,
-                        name = it.name,
-                        email = EmailEntity(value = it.email),
-                        addressBookRecord = record
-                    )
+                    val person = session.get(PersonEntity::class.java, it.id)
+                        ?: PersonEntity(name = it.name)
+                    person.name = it.name
+                    person.email = session.byNaturalId(EmailEntity::class.java)
+                        .using("value", it.email)
+                        .loadOptional()
+                        .orElse(EmailEntity(value = it.email))
+                    person.addressBookRecord = record
+                    return@map person
                 }
                 .toSet()
 
