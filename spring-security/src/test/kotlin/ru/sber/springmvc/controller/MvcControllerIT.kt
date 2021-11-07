@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import ru.sber.springmvc.service.AddressBookService
 import ru.sber.springmvc.vo.AddressBookRecord
+import ru.sber.springmvc.vo.Person
 
 
 @SpringBootTest
@@ -59,7 +60,7 @@ class MvcControllerIT {
     @ParameterizedTest
     @MethodSource("created records")
     fun `test list with query`(addressBookRecord: AddressBookRecord) {
-        mockMvc.perform(get("/app/list?name=${addressBookRecord.name}&address=${addressBookRecord.address}"))
+        mockMvc.perform(get("/app/list?name=${addressBookRecord.people.first().name}&address=${addressBookRecord.address}"))
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(view().name("list"))
@@ -107,10 +108,10 @@ class MvcControllerIT {
 
     companion object {
         val records = listOf(
-            AddressBookRecord(name = "A", address = "Улица Пушкина"),
-            AddressBookRecord(name = "B", address = "Дом Колотушкина"),
-            AddressBookRecord(name = "C", address = "Квартира Вольного"),
-            AddressBookRecord(name = "D", address = "Спросите любого")
+            AddressBookRecord(people = listOf(Person(name = "A", email = "A@test.com")), address = "Улица Пушкина"),
+            AddressBookRecord(people = listOf(Person(name = "B", email = "B@test.com")), address = "Дом Колотушкина"),
+            AddressBookRecord(people = listOf(Person(name = "C", email = "C@test.com")), address = "Квартира Вольного"),
+            AddressBookRecord(people = listOf(Person(name = "D", email = "D@test.com")), address = "Спросите любого")
         )
 
         @JvmStatic

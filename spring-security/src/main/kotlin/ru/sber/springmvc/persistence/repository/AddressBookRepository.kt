@@ -7,6 +7,7 @@ import ru.sber.springmvc.persistence.entity.AddressBookRecordEntity
 import ru.sber.springmvc.persistence.entity.EmailEntity
 import ru.sber.springmvc.persistence.entity.PersonEntity
 import ru.sber.springmvc.vo.AddressBookRecord
+import ru.sber.springmvc.vo.Person
 import ru.sber.springmvc.vo.Query
 
 @Repository
@@ -24,8 +25,10 @@ class AddressBookRepository {
                 ?: throw java.lang.RuntimeException("No record with id $id")
             addressBookRecord = AddressBookRecord(
                 result.id,
-                result.people.first().name,
-                result.people.first().email?.value!!,
+                result.people
+                    .map { Person(name = it.name, email = it.email?.value!!) }
+                    .sortedBy { it.id }
+                    .toList(),
                 result.address
             )
 
@@ -82,9 +85,16 @@ class AddressBookRepository {
 
             val records = query.list() as List<AddressBookRecordEntity>
             records.forEach { record ->
-                record.people.forEach { person ->
-                    result.add(AddressBookRecord(record.id, person.name, person.email?.value!!, record.address))
-                }
+                result.add(
+                    AddressBookRecord(
+                        id = record.id,
+                        people = record.people
+                            .map { Person(name = it.name, email = it.email?.value!!) }
+                            .sortedBy { it.id }
+                            .toList(),
+                        address = record.address
+                    )
+                )
             }
 
             session.transaction.commit()
@@ -94,15 +104,16 @@ class AddressBookRepository {
     }
 
     fun create(addressBookRecord: AddressBookRecord): Long {
-        val emailEntity = EmailEntity(value = addressBookRecord.email)
-        val personEntity = PersonEntity(name = addressBookRecord.name, email = emailEntity)
+        val personEntities = addressBookRecord.people.map {
+            PersonEntity(name = it.name, email = EmailEntity(value = it.email))
+        }.toSet()
         val addressBookRecordEntity =
             AddressBookRecordEntity(
                 id = addressBookRecord.id ?: 0,
-                address = addressBookRecord.address,
-                people = setOf(personEntity)
+                address = addressBookRecord?.address,
+                people = personEntities
             )
-        personEntity.addressBookRecord = addressBookRecordEntity
+        personEntities.forEach { it.addressBookRecord = addressBookRecordEntity }
 
         val id: Long
         sessionFactory.openSession().use { session ->
@@ -120,23 +131,16 @@ class AddressBookRepository {
 
             val record = session.get(AddressBookRecordEntity::class.java, addressBookRecord.id)
             record.address = addressBookRecord.address
-            val person =
-                record.people.find { p ->
-                    p.name == addressBookRecord.name
-                            || p.email?.value == addressBookRecord.email
+            record.people = addressBookRecord.people
+                .map {
+                    PersonEntity(
+                        id = it.id ?: 0,
+                        name = it.name,
+                        email = EmailEntity(value = it.email),
+                        addressBookRecord = record
+                    )
                 }
-            if (person != null) {
-                person.name = addressBookRecord.name
-                person.email?.value = addressBookRecord.email
-            } else {
-                record.people = record.people.asSequence()
-                    .plus(
-                        PersonEntity(
-                            name = addressBookRecord.name,
-                            email = EmailEntity(value = addressBookRecord.email)
-                        )
-                    ).toSet()
-            }
+                .toSet()
 
             session.save(record)
             session.transaction.commit()

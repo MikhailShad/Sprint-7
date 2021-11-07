@@ -5,21 +5,22 @@
     <title>Edit Page</title>
 </head>
 <body>
-<form method="post">
-    <p>Enter New Name</p>
-
+<form method="post" th:object="${record}">
+    <p>Edit Address</p>
     <p>
         <label>
-            <input name="name" th:value="${name}"/>
+            <input name="Address" th:value="*{address}"/>
         </label>
-
     </p>
 
-    <p>Enter New Address</p>
-
+    <p>Edit People</p>
     <p>
-        <label>
-            <input name="address" th:value="${address}"/>
+        <label th:each="person, itemStat : *{people}">
+            Name: <input th:field="*{people[__${itemStat.index}__].name}"/>
+            <br/>
+            Email: <input th:field="*{people[__${itemStat.index}__].email}"/>
+            <br/>
+            <br/>
         </label>
     </p>
 

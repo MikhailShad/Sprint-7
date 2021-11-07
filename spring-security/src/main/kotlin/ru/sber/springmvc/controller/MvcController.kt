@@ -18,17 +18,16 @@ class MvcController @Autowired constructor(val addressBookService: AddressBookSe
     }
 
     @GetMapping("/add")
-    fun getAddForm(): String {
+    fun getAddForm(model: Model): String {
+        model.addAttribute("record", AddressBookRecord())
         return "create"
     }
 
     @PostMapping("/add")
     fun addPage(
-        @ModelAttribute record: AddressBookRecord,
-        model: Model
+        @ModelAttribute record: AddressBookRecord
     ): RedirectView {
         addressBookService.create(record)
-        model.addAttribute("result", "Page was Created")
         return RedirectView("/")
     }
 
@@ -51,17 +50,14 @@ class MvcController @Autowired constructor(val addressBookService: AddressBookSe
         model: Model
     ): String {
         val record = addressBookService.get(id.toLong())
-        model.addAttribute("id", record.id)
-        model.addAttribute("name", record.name)
-        model.addAttribute("address", record.address)
+        model.addAttribute("record", record)
         return "record"
     }
 
     @GetMapping("/{id}/edit")
     fun getEditForm(@PathVariable id: String, model: Model): String {
         val record = addressBookService.get(id.toLong())
-        model.addAttribute("name", record.name)
-        model.addAttribute("address", record.address)
+        model.addAttribute("record", record)
         return "edit"
     }
 

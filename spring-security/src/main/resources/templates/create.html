@@ -1,26 +1,28 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Add New Record</title>
 </head>
 <body>
-<form method="post">
-    <p>Enter Name </p>
+<form method="post" th:object="${record}">
+    <p>
+    <h3>Enter Address</h3>
+    <label>
+        <input type=text th:field="*{address}"/>
+    </label>
 
     <p>
-        <label>
-            <input name="name"/>
-        </label>
-    </p>
-
-    <p>Enter Address </p>
+    <h3>Enter Name</h3>
+    <label>
+        <input type=text th:field="*{people[0].name}"/>
+    </label>
 
     <p>
-        <label>
-            <input name="address"/>
-        </label>
-    </p>
+    <h3>Enter Email</h3>
+    <label>
+        <input type=text th:field="*{people[0].email}"/>
+    </label>
 
     <p>
         <input type="submit" value="Submit"/>
