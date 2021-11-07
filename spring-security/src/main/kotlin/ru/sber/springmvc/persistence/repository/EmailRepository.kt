@@ -6,4 +6,5 @@ import ru.sber.springmvc.persistence.entity.EmailEntity
 
 @Repository
 interface EmailRepository : JpaRepository<EmailEntity, Long> {
+    fun findByValue(email: String): EmailEntity?
 }
