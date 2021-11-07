@@ -104,20 +104,33 @@ class AddressBookRepository {
     }
 
     fun create(addressBookRecord: AddressBookRecord): Long {
-        val personEntities = addressBookRecord.people.map {
-            PersonEntity(name = it.name, email = EmailEntity(value = it.email))
-        }.toSet()
-        val addressBookRecordEntity =
-            AddressBookRecordEntity(
-                id = addressBookRecord.id ?: 0,
-                address = addressBookRecord?.address,
-                people = personEntities
-            )
-        personEntities.forEach { it.addressBookRecord = addressBookRecordEntity }
-
         val id: Long
         sessionFactory.openSession().use { session ->
             session.beginTransaction()
+
+            val personEntities = addressBookRecord.people.map {
+                val emailEntity = session.byNaturalId(EmailEntity::class.java)
+                    .using("value", it.email)
+                    .load()
+                    ?: return@map PersonEntity(name = it.name, email = EmailEntity(value = it.email))
+
+                val personEntity =
+                    session.createQuery("select person from PersonEntity person join person.email email where email.id = :email_id")
+                        .setParameter("email_id", emailEntity.id)
+                        .list().first()
+                        ?: return@map PersonEntity(name = it.name, email = emailEntity)
+
+                return@map personEntity as PersonEntity
+            }.toSet()
+
+            val addressBookRecordEntity =
+                AddressBookRecordEntity(
+                    id = addressBookRecord.id ?: 0,
+                    address = addressBookRecord.address,
+                    people = personEntities
+                )
+            personEntities.forEach { it.addressBookRecord = addressBookRecordEntity }
+
             id = session.save(addressBookRecordEntity) as Long
             session.transaction.commit()
         }
@@ -138,8 +151,8 @@ class AddressBookRepository {
                     person.name = it.name
                     person.email = session.byNaturalId(EmailEntity::class.java)
                         .using("value", it.email)
-                        .loadOptional()
-                        .orElse(EmailEntity(value = it.email))
+                        .load()
+                        ?: EmailEntity(value = it.email)
                     person.addressBookRecord = record
                     return@map person
                 }

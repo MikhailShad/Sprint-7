@@ -54,7 +54,10 @@ class RestControllerIT {
     fun setUp() {
         headers.add("Cookie", getAuthCookie())
 
-        records.forEach { it.id = addressBookService.create(it) }
+        records.forEach { testRecord ->
+            testRecord.id = addressBookService.create(testRecord)
+            testRecord.people = addressBookService.get(testRecord.id!!).people.map { Person(it.id, it.name, it.email) }
+        }
     }
 
     @ParameterizedTest

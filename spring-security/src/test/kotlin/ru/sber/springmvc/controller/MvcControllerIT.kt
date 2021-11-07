@@ -32,7 +32,10 @@ class MvcControllerIT {
 
     @BeforeEach
     fun setUp() {
-        records.forEach { it.id = addressBookService.create(it) }
+        records.forEach { testRecord ->
+            testRecord.id = addressBookService.create(testRecord)
+            testRecord.people = addressBookService.get(testRecord.id!!).people.map { Person(it.id, it.name, it.email) }
+        }
     }
 
     @Test
@@ -88,6 +91,9 @@ class MvcControllerIT {
         mockMvc.perform(get("/app/${addressBookRecord.id}/delete"))
             .andDo(print())
             .andExpect(status().is3xxRedirection)
+
+        // Post-actions
+        addressBookRecord.id = null
     }
 
     @ParameterizedTest
