@@ -26,6 +26,9 @@ class PersonService(
     @Autowired
     lateinit var personToEntity: Converter<Person, PersonEntity>
 
+    @Autowired
+    lateinit var entityToPerson: Converter<PersonEntity, Person>
+
     override fun loadUserByUsername(p0: String?): UserDetails {
         val p = personRepository.findByEmail(p0!!)
         return p
@@ -39,6 +42,10 @@ class PersonService(
         }
 
         personRepository.saveAndFlush(personToEntity.convert(person)!!)
+    }
+
+    fun getAll(): List<Person> {
+        return personRepository.findAll().mapNotNull { entityToPerson.convert(it) }
     }
 
 
