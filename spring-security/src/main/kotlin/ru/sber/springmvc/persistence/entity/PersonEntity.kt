@@ -1,5 +1,7 @@
 package ru.sber.springmvc.persistence.entity
 
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import javax.persistence.*
 
 @Entity
@@ -12,10 +14,43 @@ final class PersonEntity(
 
     var name: String,
 
+    var storedPassword: String? = null,
+
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var email: EmailEntity? = null,
 
     @ManyToOne(optional = false, cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     @JoinColumn(name = "record_id", referencedColumnName = "id")
-    var addressBookRecord: AddressBookRecordEntity? = null
-)
+    var addressBookRecord: AddressBookRecordEntity? = null,
+
+    @ManyToMany
+    var roles: Set<RoleEntity>? = null
+) : UserDetails {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        return roles!!.toMutableSet()
+    }
+
+    override fun getPassword(): String {
+        return storedPassword!!
+    }
+
+    override fun getUsername(): String {
+        return email!!.value
+    }
+
+    override fun isAccountNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isAccountNonLocked(): Boolean {
+        return true
+    }
+
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isEnabled(): Boolean {
+        return true
+    }
+}
