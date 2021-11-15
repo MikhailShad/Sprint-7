@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
@@ -26,6 +26,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http
             .csrf().disable()
             .authorizeRequests()
+            .antMatchers("/signUp").not().fullyAuthenticated()
             .antMatchers("/").permitAll()
             .antMatchers("/app/**").hasAnyRole("ADMIN", "USER")
             .antMatchers("/api/**").hasAnyRole("ADMIN", "TECH")
@@ -56,6 +57,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Bean
     protected fun passwordEncoder(): PasswordEncoder {
-        return Argon2PasswordEncoder(32, 32, 1, 32, 5)
+        return BCryptPasswordEncoder()
     }
 }

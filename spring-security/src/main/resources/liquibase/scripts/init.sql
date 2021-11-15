@@ -19,7 +19,7 @@ create sequence if not exists role_id_gen start 1000 increment 50;
 create table roles
 (
     id   bigint not null default nextval('role_id_gen'),
-    name text,
+    role text,
     primary key (id)
 );
 --rollback

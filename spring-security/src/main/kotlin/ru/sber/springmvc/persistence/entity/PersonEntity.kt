@@ -19,11 +19,11 @@ final class PersonEntity(
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var email: EmailEntity? = null,
 
-    @ManyToOne(optional = false, cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @ManyToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     @JoinColumn(name = "record_id", referencedColumnName = "id")
     var addressBookRecord: AddressBookRecordEntity? = null,
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     var roles: Set<RoleEntity>? = null
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {

@@ -15,12 +15,12 @@ final class RoleEntity(
 
     @NaturalId
     @Enumerated(value = EnumType.STRING)
-    var name: Role,
+    var role: Role,
 
     @ManyToMany(mappedBy = "roles")
     var people: Set<PersonEntity>? = null
 ) : GrantedAuthority {
     override fun getAuthority(): String {
-        return name.authority
+        return role.name
     }
 }
