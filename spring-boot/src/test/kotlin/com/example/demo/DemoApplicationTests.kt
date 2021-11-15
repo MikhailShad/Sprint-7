@@ -1,11 +1,11 @@
 package com.example.demo
 
-import org.junit.jupiter.api.Disabled
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
-@Disabled
 @SpringBootTest
+@AutoConfigureEmbeddedDatabase(provider = AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY)
 class DemoApplicationTests {
 
 	@Test
