@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import ru.sber.springmvc.service.AddressBookService
 import ru.sber.springmvc.vo.AddressBookRecord
+import ru.sber.springmvc.vo.Person
 
 
 @SpringBootTest
@@ -31,7 +32,10 @@ class MvcControllerIT {
 
     @BeforeEach
     fun setUp() {
-        records.forEach { addressBookService.create(it) }
+        records.forEach { testRecord ->
+            testRecord.id = addressBookService.create(testRecord)
+            testRecord.people = addressBookService.get(testRecord.id!!).people.map { Person(it.id, it.name, it.email) }
+        }
     }
 
     @Test
@@ -56,16 +60,18 @@ class MvcControllerIT {
             .andExpect(view().name("list"))
     }
 
-    @Test
-    fun `test list with query`() {
-        mockMvc.perform(get("/app/list?name=B"))
+    @ParameterizedTest
+    @MethodSource("created records")
+    fun `test list with query`(addressBookRecord: AddressBookRecord) {
+        mockMvc.perform(get("/app/list?name=${addressBookRecord.people.first().name}&address=${addressBookRecord.address}"))
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(view().name("list"))
     }
 
-    @Test
-    fun `test edit`() {
+    @ParameterizedTest
+    @MethodSource("created records")
+    fun `test edit`(addressBookRecord: AddressBookRecord) {
         val note: MultiValueMap<String, String> = LinkedMultiValueMap()
 
         note.add("name", "J")
@@ -74,7 +80,7 @@ class MvcControllerIT {
             "Лондон. Ну это там, где рыба, чипсы, дрянная еда, отвратная погода, Мэри «та самая» Поппинс!"
         )
 
-        mockMvc.perform(post("/app/0/edit").params(note))
+        mockMvc.perform(post("/app/${addressBookRecord.id}/edit").params(note))
             .andDo(print())
             .andExpect(status().is3xxRedirection)
     }
@@ -85,6 +91,9 @@ class MvcControllerIT {
         mockMvc.perform(get("/app/${addressBookRecord.id}/delete"))
             .andDo(print())
             .andExpect(status().is3xxRedirection)
+
+        // Post-actions
+        addressBookRecord.id = null
     }
 
     @ParameterizedTest
@@ -105,10 +114,10 @@ class MvcControllerIT {
 
     companion object {
         val records = listOf(
-            AddressBookRecord("A", "Улица Пушкина"),
-            AddressBookRecord("B", "Дом Колотушкина"),
-            AddressBookRecord("C", "Квартира Вольного"),
-            AddressBookRecord("D", "Спросите любого")
+            AddressBookRecord(people = listOf(Person(name = "A", email = "A@test.com")), address = "Улица Пушкина"),
+            AddressBookRecord(people = listOf(Person(name = "B", email = "B@test.com")), address = "Дом Колотушкина"),
+            AddressBookRecord(people = listOf(Person(name = "C", email = "C@test.com")), address = "Квартира Вольного"),
+            AddressBookRecord(people = listOf(Person(name = "D", email = "D@test.com")), address = "Спросите любого")
         )
 
         @JvmStatic

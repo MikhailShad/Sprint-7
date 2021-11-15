@@ -18,6 +18,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import ru.sber.springmvc.service.AddressBookService
 import ru.sber.springmvc.vo.AddressBookRecord
+import ru.sber.springmvc.vo.Person
 import java.util.concurrent.ConcurrentHashMap
 
 
@@ -53,7 +54,10 @@ class RestControllerIT {
     fun setUp() {
         headers.add("Cookie", getAuthCookie())
 
-        records.forEach { addressBookService.create(it) }
+        records.forEach { testRecord ->
+            testRecord.id = addressBookService.create(testRecord)
+            testRecord.people = addressBookService.get(testRecord.id!!).people.map { Person(it.id, it.name, it.email) }
+        }
     }
 
     @ParameterizedTest
@@ -68,7 +72,7 @@ class RestControllerIT {
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertNotNull(response.body)
-        assertEquals(addressBookRecord.name, response.body!!.name)
+        assertEquals(addressBookRecord.people, response.body!!.people)
     }
 
     @ParameterizedTest
@@ -91,7 +95,7 @@ class RestControllerIT {
         val response = restTemplate.exchange(
             url("api/list"),
             HttpMethod.POST,
-            HttpEntity(mapOf("name" to addressBookRecord.name), headers),
+            HttpEntity(mapOf("name" to addressBookRecord.people.first().name), headers),
             List::class.java
         )
 
@@ -140,10 +144,10 @@ class RestControllerIT {
 
     companion object {
         val records = listOf(
-            AddressBookRecord("A", "Улица Пушкина"),
-            AddressBookRecord("B", "Дом Колотушкина"),
-            AddressBookRecord("C", "Квартира Вольного"),
-            AddressBookRecord("D", "Спросите любого")
+            AddressBookRecord(people = listOf(Person(name = "A", email = "A@test.com")), address = "Улица Пушкина"),
+            AddressBookRecord(people = listOf(Person(name = "B", email = "B@test.com")), address = "Дом Колотушкина"),
+            AddressBookRecord(people = listOf(Person(name = "C", email = "C@test.com")), address = "Квартира Вольного"),
+            AddressBookRecord(people = listOf(Person(name = "D", email = "D@test.com")), address = "Спросите любого")
         )
 
         @JvmStatic

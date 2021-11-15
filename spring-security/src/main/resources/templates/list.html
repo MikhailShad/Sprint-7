@@ -20,7 +20,7 @@
         </tr>
         <tr th:each="record:${result}">
             <td th:text="${record.id}" th:href="@{/app/{id}/view(id=${record.id})}">View</td>
-            <td th:text="${record.name}">Name</td>
+            <td th:text="${#strings.listJoin(record.people.![name], ', ')}">Name</td>
             <td th:text="${record.address}">Address</td>
             <td>
                 <a th:href="@{/app/{id}/edit(id=${record.id})}">Edit</a>
