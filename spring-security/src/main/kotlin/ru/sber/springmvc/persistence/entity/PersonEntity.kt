@@ -12,10 +12,10 @@ final class PersonEntity(
 
     var name: String,
 
-    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var email: EmailEntity? = null,
 
-    @ManyToOne(optional = false, cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     @JoinColumn(name = "record_id", referencedColumnName = "id")
     var addressBookRecord: AddressBookRecordEntity? = null
 )
