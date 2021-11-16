@@ -2,6 +2,7 @@ package ru.sber.springmvc.converter
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.convert.converter.Converter
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import ru.sber.springmvc.persistence.entity.AddressBookRecordEntity
 import ru.sber.springmvc.persistence.entity.EmailEntity
@@ -45,11 +46,16 @@ class EntityToRecord : Converter<AddressBookRecordEntity, AddressBookRecord> {
 
 @Component
 class PersonToEntity : Converter<Person, PersonEntity> {
+
+    @Autowired
+    lateinit var passwordEncoder: PasswordEncoder
+
     override fun convert(source: Person): PersonEntity {
         return PersonEntity(
             id = source.id ?: 0,
             name = source.name,
-            email = EmailEntity(value = source.email)
+            email = EmailEntity(value = source.email),
+            storedPassword = passwordEncoder.encode(source.password)
         )
     }
 }

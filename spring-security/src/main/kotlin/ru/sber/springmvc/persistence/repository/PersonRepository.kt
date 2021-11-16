@@ -9,5 +9,5 @@ import ru.sber.springmvc.persistence.entity.PersonEntity
 @Repository
 interface PersonRepository : JpaRepository<PersonEntity, Long> {
     @Query("select person from PersonEntity as person join EmailEntity email on person.email = email where email.value = :email")
-    fun findByEmail(@Param("email") email: String): PersonEntity
+    fun findByEmail(@Param("email") email: String): PersonEntity?
 }

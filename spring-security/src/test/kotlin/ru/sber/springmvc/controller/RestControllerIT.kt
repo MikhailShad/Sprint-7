@@ -40,8 +40,8 @@ class RestControllerIT {
 
     private fun getAuthCookie(): String? {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap()
-        request.set("login", "admin")
-        request.set("password", "admin")
+        request.set("username", "admin@admin.com")
+        request.set("password", "test")
 
         val response = restTemplate.postForEntity(url("login"), HttpEntity(request, HttpHeaders()), String::class.java)
 

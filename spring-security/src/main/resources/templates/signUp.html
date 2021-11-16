@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Authentication Page</title>
+</head>
+<body>
+<form method="post" th:object="${newUser}">
+
+    <p>Enter name
+        <label>
+            <input name="name" placeholder="For example, Ivan"/>
+        </label>
+    </p>
+
+    <p>Enter email
+        <label>
+            <input name="email" placeholder="For example, Ivan@gmail.com"/>
+        </label>
+    </p>
+
+    <p>Enter password
+        <label>
+            <input name="password" placeholder="For example, 000000"/>
+        </label>
+    </p>
+
+    <p>
+        <input type="submit" value="Sign Un"/>
+    </p>
+</form>
+</body>
+</html>
